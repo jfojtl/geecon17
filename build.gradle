@@ -1,0 +1,24 @@
+plugins {
+    id "java"
+    id "maven"
+    id "nebula.release" version "6.0.2"
+    id "nebula.project" version "3.4.0"
+    id "nebula.maven-publish" version "5.1.4"
+    id "org.springframework.boot" version "1.5.7.RELEASE"
+}
+
+description = "Sample code for talk at Geecon Prague 2017"
+group "com.fojtl"
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
+
+repositories {
+    jcenter()
+}
+
+dependencies {
+    compile("org.springframework.boot:spring-boot-starter:$springVersion")
+    compile("org.springframework.boot:spring-boot-starter-actuator:$springVersion")
+    compile("org.infinispan:infinispan-core:$ispnVersion")
+    compile("org.infinispan:infinispan-cachestore-rocksdb:$ispnVersion")
+}
