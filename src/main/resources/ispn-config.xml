@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<infinispan
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="urn:infinispan:config:9.1 http://www.infinispan.org/schemas/infinispan-config-9.1.xsd
+            urn:infinispan:config:store:rocksdb:9.1 http://infinispan.org/schemas/infinispan-cachestore-rocksdb-config-9.1.xsd"
+        xmlns="urn:infinispan:config:9.1"
+        xmlns:rocksdb="urn:infinispan:config:store:rocksdb:9.1">
+
+    <jgroups>
+        <stack-file name="geecon-jgroups" path="${jgroupsConfigFile:jgroups.xml}"/>
+    </jgroups>
+
+    <cache-container name="geecon" default-cache="jobs">
+        <transport stack="geecon-jgroups" cluster="geecon-group" />
+
+
+        <distributed-cache-configuration name="base-distributed" owners="2" l1-lifespan="30000">
+            <persistence passivation="false">
+                <rocksdb:rocksdb-store path="build/data/${app.node}/ispn/">
+                    <rocksdb:expiration path="build/data/${app.node}/ispn_expired/"/>
+                    <rocksdb:compression type="NONE"/>
+                </rocksdb:rocksdb-store>
+            </persistence>
+            <indexing index="ALL" />
+        </distributed-cache-configuration>
+
+        <distributed-cache name="jobs" configuration="base-distributed"/>
+        <distributed-cache name="job-2d-details" configuration="base-distributed"/>
+        <distributed-cache name="job-events" configuration="base-distributed"/>
+    </cache-container>
+
+</infinispan>

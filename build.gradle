@@ -17,8 +17,8 @@ repositories {
 }
 
 dependencies {
-    compile("org.springframework.boot:spring-boot-starter:$springVersion")
-    compile("org.springframework.boot:spring-boot-starter-actuator:$springVersion")
+    compile("org.springframework.boot:spring-boot-starter-web:$springVersion")
     compile("org.infinispan:infinispan-core:$ispnVersion")
+    compile("org.infinispan:infinispan-query:$ispnVersion")
     compile("org.infinispan:infinispan-cachestore-rocksdb:$ispnVersion")
 }
