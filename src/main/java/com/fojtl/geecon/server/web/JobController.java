@@ -1,7 +1,7 @@
 package com.fojtl.geecon.server.web;
 
-import com.fojtl.geecon.server.domain.Job;
-import com.fojtl.geecon.server.domain.JobDetail2D;
+import com.fojtl.geecon.server.dal.Job;
+import com.fojtl.geecon.server.dal.JobDetail2D;
 import com.fojtl.geecon.server.web.models.JobStatus;
 import com.fojtl.geecon.server.web.models.JobTicket;
 import org.infinispan.Cache;
@@ -9,6 +9,7 @@ import org.infinispan.manager.DefaultCacheManager;
 import org.infinispan.query.Search;
 import org.infinispan.query.dsl.Expression;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -20,28 +21,35 @@ import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.springframework.web.bind.annotation.RequestMethod.*;
+import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
+import static org.springframework.web.bind.annotation.RequestMethod.GET;
+import static org.springframework.web.bind.annotation.RequestMethod.POST;
 
 @Controller
 @RequestMapping("{userId}/jobs")
 public class JobController {
     private final Cache<String, Job> jobCache;
     private final Cache<String, JobDetail2D> jobDetailsCache;
-    private final Cache<Object, Object> jobEventsCache;
+
+    @Value("${app.node}")
+    private String node;
 
     @Autowired
     public JobController(final DefaultCacheManager cacheManager) {
         jobCache = cacheManager.getCache("jobs");
         jobDetailsCache = cacheManager.getCache("job-2d-details");
-        jobEventsCache = cacheManager.getCache("job-events");
     }
 
     @RequestMapping(method = POST)
-    ResponseEntity<?> accept(@PathVariable String userId, @RequestBody JobTicket jobTicket) {
+    public ResponseEntity<?> accept(@PathVariable String userId, @RequestBody JobTicket jobTicket) {
         Job job = createJobFromJobTicket(jobTicket, userId);
         JobDetail2D jobDetail = createJobDetailFromJobTicket(jobTicket);
 
         jobCache.putIfAbsent(job.getJobId(), job);
+
+        if ("node0".equals(node))
+            return ResponseEntity.status(INTERNAL_SERVER_ERROR).build();
+
         jobDetailsCache.putIfAbsent(jobDetail.getJobId(), jobDetail);
 
         URI location = ServletUriComponentsBuilder
@@ -51,7 +59,7 @@ public class JobController {
     }
 
     @RequestMapping(method = GET)
-    ResponseEntity<List<JobTicket>> getAllJobs(@PathVariable String userId) {
+    public ResponseEntity<List<JobTicket>> getAllJobs(@PathVariable String userId) {
         ArrayList<JobTicket> jobTickets = new ArrayList<>();
 
         List<Job> jobsByOwner = Search.getQueryFactory(jobCache)
@@ -71,10 +79,15 @@ public class JobController {
         return ResponseEntity.ok(jobTickets);
     }
 
-    @RequestMapping(path = "/{jobId}", method = PUT)
-    ResponseEntity<?> print(@PathVariable String userId, @PathVariable String jobId) {
+    @RequestMapping(path = "/{jobId>", method = GET)
+    public ResponseEntity<JobTicket> getSingleJob(@PathVariable String userId, @PathVariable String jobId) {
+        Job job = jobCache.get(jobId);
+        JobDetail2D jobDetail = jobDetailsCache.get(jobId);
+        if (job == null || jobDetail == null) {
+            return ResponseEntity.notFound().build();
+        }
 
-        return ResponseEntity.ok().build();
+        return ResponseEntity.ok(createJobTicketFromJobAndJobDetail(job, jobDetail));
     }
 
     private static JobDetail2D createJobDetailFromJobTicket(JobTicket jobTicket) {

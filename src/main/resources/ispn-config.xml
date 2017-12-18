@@ -11,7 +11,7 @@
     </jgroups>
 
     <cache-container name="geecon" default-cache="jobs">
-        <transport stack="geecon-jgroups" cluster="geecon-group" />
+        <transport stack="geecon-jgroups" cluster="geecon-group" initial-cluster-size="3" />
 
 
         <distributed-cache-configuration name="base-distributed" owners="2" l1-lifespan="30000">

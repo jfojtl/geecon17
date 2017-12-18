@@ -1,4 +1,4 @@
-package com.fojtl.geecon.server.domain;
+package com.fojtl.geecon.server.dal;
 
 import org.hibernate.search.annotations.*;
 

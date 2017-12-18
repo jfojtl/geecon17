@@ -1,4 +1,4 @@
-package com.fojtl.geecon.server.domain.jobevents;
+package com.fojtl.geecon.server.dal.jobevents;
 
 import java.util.Date;
 

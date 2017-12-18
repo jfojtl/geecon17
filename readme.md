@@ -7,9 +7,9 @@ Presentation at [speakerdeck](https://speakerdeck.com/jfojtl/). Client code at `
 First build the project by running e.g. `./gradlew clean build assemble` and then start server cluster:
 
 ```
-./build/libs/geecon-<version>.jar -Dapp.node=node0 -Dserver.port=8000 -Djgroups.tcp.port=7800
-./build/libs/geecon-<version>.jar -Dapp.node=node1 -Dserver.port=8001 -Djgroups.tcp.port=7801
-./build/libs/geecon-<version>.jar -Dapp.node=node2 -Dserver.port=8002 -Djgroups.tcp.port=7802
+java -jar ./build/libs/geecon-<version>.jar -Dapp.node=node0 -Dserver.port=8000 -Djgroups.tcp.port=7800
+java -jar ./build/libs/geecon-<version>.jar -Dapp.node=node1 -Dserver.port=8001 -Djgroups.tcp.port=7801
+java -jar ./build/libs/geecon-<version>.jar -Dapp.node=node2 -Dserver.port=8002 -Djgroups.tcp.port=7802
 ```
 
 Or you can use IntelliJ IDEA's spring boot run configurations
@@ -25,7 +25,6 @@ VM options: -Dapp.node=node1 -Dserver.port=8001 -Djgroups.tcp.port=7801
 configuration name: node2
 main class: com.fojtl.geecon.server.Server
 VM options: -Dapp.node=node2 -Dserver.port=8002 -Djgroups.tcp.port=7802
-
 ```
 
 Then go to `src/main/js` and run `npm i && npm start` or use IntelliJ IDEA's npm configuration with command `start`.
@@ -45,7 +44,7 @@ To simulate fail during write, insert snippets from `./snippets.md` to `com.fojt
                        |                          |
 +-------------------+  |   +----------------+-----+--------+
 |                   |  |   |                |              |
-|   Client<SPA>     +------>    JobService  |   ispn       |
+|   Client          +------>    JobService  |   ispn       |
 |                   |  |   |                |              |
 +-------------------+  |   +----------------+-----+--------+
                        |                          |

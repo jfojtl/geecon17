@@ -1,16 +1,20 @@
 package com.fojtl.geecon.server.web.models;
 
-import com.fojtl.geecon.server.domain.Color;
-import com.fojtl.geecon.server.domain.Sides;
+import com.fojtl.geecon.server.dal.Color;
+import com.fojtl.geecon.server.dal.Sides;
 
 public class JobTicket {
-    private final String jobId;
-    private final String owner;
-    private final String jobTitle;
-    private final int numberOfPages;
-    private final Sides sides;
-    private final Color color;
-    private final JobStatus status;
+    private String jobId;
+    private String owner;
+    private String jobTitle;
+    private int numberOfPages;
+    private Sides sides;
+    private Color color;
+    private JobStatus status;
+
+    public JobTicket() {
+
+    }
 
     public JobTicket(String jobId, String owner, String jobTitle, int numberOfPages, Sides sides, Color color, JobStatus status) {
         this.jobId = jobId;
